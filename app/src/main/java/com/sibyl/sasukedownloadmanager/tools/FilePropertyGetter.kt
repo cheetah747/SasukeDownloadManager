@@ -1,4 +1,4 @@
-package com.sibyl.sasukedownloadmanager
+package com.sibyl.sasukedownloadmanager.tools
 
 import java.io.IOException
 import java.io.UnsupportedEncodingException
@@ -17,7 +17,7 @@ class  FilePropertyGetter {
     data class Properties(var fileName: String = "", var fileSize: Long = 0)
 
 
-    fun getFileProperties(url: String): FilePropertyGetter.Properties {
+    fun getFileProperties(url: String): Properties {
         var filename = ""
         var isok = false
         var conn: URLConnection? = null
@@ -25,15 +25,15 @@ class  FilePropertyGetter {
         try {
             conn = URL(url).openConnection()
             if (conn == null) {
-                return Properties("未知",0)
+                return Properties("未知", 0)
             }
             val hf: Map<String, List<String>> = conn.getHeaderFields()
             if (hf == null) {
-                return Properties("未知",conn?.contentLengthLong)
+                return Properties("未知", conn?.contentLengthLong)
             }
             val keys: Set<String> = hf.keys
             if (keys == null) {
-                return Properties("未知",conn?.contentLengthLong)
+                return Properties("未知", conn?.contentLengthLong)
             }
 
             for (key in keys) {
@@ -66,7 +66,8 @@ class  FilePropertyGetter {
             filename = url.substring(url.lastIndexOf("/") + 1)
         }
 
-        return Properties(filename,conn?.contentLengthLong ?:0)
+        return Properties(filename, conn?.contentLengthLong
+                ?: 0)
     }
 
 

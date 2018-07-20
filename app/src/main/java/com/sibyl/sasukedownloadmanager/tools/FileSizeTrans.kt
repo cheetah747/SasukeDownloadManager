@@ -1,4 +1,4 @@
-package com.sibyl.sasukedownloadmanager
+package com.sibyl.sasukedownloadmanager.tools
 
 import java.math.BigDecimal
 

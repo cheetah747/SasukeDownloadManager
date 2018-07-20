@@ -34,5 +34,7 @@ dependencies {
     compile 'org.jetbrains.anko:anko-support-v4:0.8.2' // In case you need support-v4 bindings
     compile 'org.jetbrains.anko:anko-appcompat-v7:0.8.2' // For appcompat-v7 bindings
     implementation 'com.github.dfqin:grantor:2.1.0'
+    compile 'com.android.support:design:27.0.0'
+
 
 }

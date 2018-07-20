@@ -1,4 +1,4 @@
-package com.sibyl.sasukedownloadmanager
+package com.sibyl.sasukedownloadmanager.tools
 
 import android.app.DownloadManager
 import android.content.Context
@@ -11,17 +11,20 @@ import java.io.File
  * @author Sasuke on 2018/7/20.
  */
 class DownloadUtil {
-    fun download(context: Context, downloadUrl: String, downloadName: String) {
+    fun download(context: Context, downloadUrl: String) {
         async {
             // 创建下载请求
+            val fileName = FilePropertyGetter.INSTANCE.getFileProperties(downloadUrl).fileName
+            val filesizeText = tranSizeText(FilePropertyGetter.INSTANCE.getFileProperties(downloadUrl).fileSize)
+
             val request: DownloadManager.Request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
                 //VISIBILITY_VISIBLE:                   下载过程中可见, 下载完后自动消失 (默认)
                 // VISIBILITY_VISIBLE_NOTIFY_COMPLETED:  下载过程中和下载完成后均可见
                 // VISIBILITY_HIDDEN:                    始终不显示通知
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                setTitle(downloadName.takeIf { it.length > 21 }?.let { "${it.substring(0,18)}..." })
-//                setDescription("このファイルについて。。。")
-                setDestinationUri(Uri.fromFile(File("${Environment.getExternalStorageDirectory()}/Download", downloadName)))
+                setTitle(fileName.takeIf { it.length > 21 }?.let { "${it.substring(0,18)}_${filesizeText}" })
+                setDescription(filesizeText)
+                setDestinationUri(Uri.fromFile(File("${Environment.getExternalStorageDirectory()}/Download", fileName)))
                 // 获取下载管理器服务的实例, 添加下载任务，并返回一个id
                 (context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager).enqueue(this)
             }
