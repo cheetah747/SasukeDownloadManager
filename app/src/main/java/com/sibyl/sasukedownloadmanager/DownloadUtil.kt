@@ -4,6 +4,7 @@ import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
+import org.jetbrains.anko.async
 import java.io.File
 
 /**
@@ -13,21 +14,22 @@ class DownloadUtil {
     val downloadUrl = "https://oalxfnrvo.qnssl.com/V4.5.0_ShengYiGuanJia180717.apk"
 
     fun download(context: Context) {
-        // 创建下载请求
-        val request: DownloadManager.Request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
-            //VISIBILITY_VISIBLE:                   下载过程中可见, 下载完后自动消失 (默认)
-            // VISIBILITY_VISIBLE_NOTIFY_COMPLETED:  下载过程中和下载完成后均可见
-            // VISIBILITY_HIDDEN:                    始终不显示通知
-            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
-            setTitle("ダウンロードしています。。。。")
-            setDescription("このファイルについて。。。")
-            setDestinationUri(Uri.fromFile(File("${Environment.getExternalStorageDirectory()}/Download", "downloadmanagerTest.apk")))
-            // 获取下载管理器服务的实例, 添加下载任务，并返回一个id
-            (context.getSystemService (Context.DOWNLOAD_SERVICE) as DownloadManager).enqueue(this)
+        async {
+            val fileName = FileNameGetter().getName(downloadUrl)
+            // 创建下载请求
+            val request: DownloadManager.Request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
+                //VISIBILITY_VISIBLE:                   下载过程中可见, 下载完后自动消失 (默认)
+                // VISIBILITY_VISIBLE_NOTIFY_COMPLETED:  下载过程中和下载完成后均可见
+                // VISIBILITY_HIDDEN:                    始终不显示通知
+                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                setTitle(fileName)
+                setDescription("このファイルについて。。。")
+                setDestinationUri(Uri.fromFile(File("${Environment.getExternalStorageDirectory()}/Download", fileName)))
+                // 获取下载管理器服务的实例, 添加下载任务，并返回一个id
+                (context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager).enqueue(this)
 
+            }
         }
-
-
     }
 
 

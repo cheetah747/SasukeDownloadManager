@@ -9,14 +9,17 @@ import java.net.URL
  * @author Sasuke on 2018/7/20.
  * 通过url获取要下载的文件名名字
  */
-class fileNameGetter {
+class FileNameGetter {
+    fun main(){
+        getName("https://oalxfnrvo.qnssl.com/V4.5.0_ShengYiGuanJia180717.apk")
+    }
 
     fun getName(url: String): String {
-        var filename = "";
-        var isok = false;
+        var filename = ""
+        var isok = false
         // 从UrlConnection中获取文件名称
         try {
-            val myURL = URL(url);
+            val myURL = URL(url)
 
             val conn = myURL.openConnection()
             if (conn == null) {
@@ -36,7 +39,12 @@ class fileNameGetter {
                     try {
                         var result = String(value.toByteArray(Charsets.ISO_8859_1))
                         result.indexOf("filename").takeIf { it >= 0 }?.let {
-                            filename = result.substring(it + "filename".length).substring(result.indexOf("=") + 1)
+                            //                            filename = result.substring(it + "filename".length).substring(result.indexOf("=") + 1)
+                            filename = result.split(";").filter { it.contains("filename") }[0]
+                                    .replace("filename","")
+                                    .replace("=","")
+                                    .replace("\"","")
+                                    .replace("_apkpure.com","")
                             isok = true
                         }
                     } catch (e: UnsupportedEncodingException) {
