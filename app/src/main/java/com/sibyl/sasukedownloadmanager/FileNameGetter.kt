@@ -10,28 +10,23 @@ import java.net.URL
  * 通过url获取要下载的文件名名字
  */
 class FileNameGetter {
-    fun main(){
-        getName("https://oalxfnrvo.qnssl.com/V4.5.0_ShengYiGuanJia180717.apk")
-    }
-
     fun getName(url: String): String {
         var filename = ""
         var isok = false
         // 从UrlConnection中获取文件名称
         try {
-            val myURL = URL(url)
 
-            val conn = myURL.openConnection()
+            val conn = URL(url).openConnection()
             if (conn == null) {
                 return "未知"
             }
             val hf: Map<String, List<String>> = conn.getHeaderFields()
             if (hf == null) {
-                return ""
+                return "未知"
             }
             val keys: Set<String> = hf.keys
             if (keys == null) {
-                return ""
+                return "未知"
             }
 
             for (key in keys) {
@@ -39,7 +34,6 @@ class FileNameGetter {
                     try {
                         var result = String(value.toByteArray(Charsets.ISO_8859_1))
                         result.indexOf("filename").takeIf { it >= 0 }?.let {
-                            //                            filename = result.substring(it + "filename".length).substring(result.indexOf("=") + 1)
                             filename = result.split(";").filter { it.contains("filename") }[0]
                                     .replace("filename","")
                                     .replace("=","")
@@ -60,6 +54,7 @@ class FileNameGetter {
         } catch (e: IOException) {
             e.printStackTrace()
         }
+        //如果上面的没获取成功，那就补救一下，用直接截取“/”后面的字符串来获取。
         filename.takeIf { it.isNullOrEmpty() }?.let {
             filename = url.substring(url.lastIndexOf("/") + 1)
         }

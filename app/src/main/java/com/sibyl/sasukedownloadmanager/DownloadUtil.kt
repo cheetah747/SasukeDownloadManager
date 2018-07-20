@@ -11,9 +11,8 @@ import java.io.File
  * @author Sasuke on 2018/7/20.
  */
 class DownloadUtil {
-    val downloadUrl = "https://oalxfnrvo.qnssl.com/V4.5.0_ShengYiGuanJia180717.apk"
-
-    fun download(context: Context) {
+//    val downloadUrl = "https://oalxfnrvo.qnssl.com/V4.5.0_ShengYiGuanJia180717.apk"
+    fun download(context: Context, downloadUrl: String) {
         async {
             val fileName = FileNameGetter().getName(downloadUrl)
             // 创建下载请求
@@ -27,7 +26,6 @@ class DownloadUtil {
                 setDestinationUri(Uri.fromFile(File("${Environment.getExternalStorageDirectory()}/Download", fileName)))
                 // 获取下载管理器服务的实例, 添加下载任务，并返回一个id
                 (context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager).enqueue(this)
-
             }
         }
     }

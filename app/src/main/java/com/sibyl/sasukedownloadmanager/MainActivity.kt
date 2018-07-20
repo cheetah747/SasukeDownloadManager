@@ -19,10 +19,17 @@ class MainActivity : AppCompatActivity() {
 
     fun init() {
         requestPermissions()
-        AlertDialog.Builder(this).setMessage("准备开始下载，确定开始吗？")
-                .setPositiveButton("确定", DialogInterface.OnClickListener { dialog, which ->
-                    DownloadUtil().download(this)
-                }).create().show()
+        val url = "https://oalxfnrvo.qnssl.com/V4.5.0_ShengYiGuanJia180717.apk"
+        AlertDialog.Builder(this).setTitle("ダウンロードを始めますか？")
+                .setMessage(url)
+                .setPositiveButton("はい", DialogInterface.OnClickListener { dialog, which ->
+                    DownloadUtil().download(this,url)
+                    finish()
+                })
+                .setNegativeButton("いいえ", DialogInterface.OnClickListener { dialog, which ->
+                    finish()
+                })
+                .create().show()
     }
 
     fun requestPermissions() {
