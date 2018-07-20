@@ -10,11 +10,14 @@ import java.net.URLConnection
  * @author Sasuke on 2018/7/20.
  * 通过url获取要下载的文件名名字
  */
-class FileNameGetter {
-    data class FileProperties(var fileName: String = "",var fileSize: Long = 0)
+class  FilePropertyGetter {
+    companion object {
+        val INSTANCE: FilePropertyGetter by lazy { FilePropertyGetter() }
+    }
+    data class Properties(var fileName: String = "", var fileSize: Long = 0)
 
 
-    fun getName(url: String): FileNameGetter.FileProperties {
+    fun getFileProperties(url: String): FilePropertyGetter.Properties {
         var filename = ""
         var isok = false
         var conn: URLConnection? = null
@@ -22,15 +25,15 @@ class FileNameGetter {
         try {
             conn = URL(url).openConnection()
             if (conn == null) {
-                return FileProperties("未知",0)
+                return Properties("未知",0)
             }
             val hf: Map<String, List<String>> = conn.getHeaderFields()
             if (hf == null) {
-                return FileProperties("未知",conn?.contentLengthLong)
+                return Properties("未知",conn?.contentLengthLong)
             }
             val keys: Set<String> = hf.keys
             if (keys == null) {
-                return FileProperties("未知",conn?.contentLengthLong)
+                return Properties("未知",conn?.contentLengthLong)
             }
 
             for (key in keys) {
@@ -63,8 +66,9 @@ class FileNameGetter {
             filename = url.substring(url.lastIndexOf("/") + 1)
         }
 
-        return FileProperties(filename,conn?.contentLengthLong ?:0)
+        return Properties(filename,conn?.contentLengthLong ?:0)
     }
+
 
 
 }
