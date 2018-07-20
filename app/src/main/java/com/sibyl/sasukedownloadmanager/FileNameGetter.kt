@@ -4,29 +4,33 @@ import java.io.IOException
 import java.io.UnsupportedEncodingException
 import java.net.MalformedURLException
 import java.net.URL
+import java.net.URLConnection
 
 /**
  * @author Sasuke on 2018/7/20.
  * 通过url获取要下载的文件名名字
  */
 class FileNameGetter {
-    fun getName(url: String): String {
+    data class FileProperties(var fileName: String = "",var fileSize: Long = 0)
+
+
+    fun getName(url: String): FileNameGetter.FileProperties {
         var filename = ""
         var isok = false
+        var conn: URLConnection? = null
         // 从UrlConnection中获取文件名称
         try {
-
-            val conn = URL(url).openConnection()
+            conn = URL(url).openConnection()
             if (conn == null) {
-                return "未知"
+                return FileProperties("未知",0)
             }
             val hf: Map<String, List<String>> = conn.getHeaderFields()
             if (hf == null) {
-                return "未知"
+                return FileProperties("未知",conn?.contentLengthLong)
             }
             val keys: Set<String> = hf.keys
             if (keys == null) {
-                return "未知"
+                return FileProperties("未知",conn?.contentLengthLong)
             }
 
             for (key in keys) {
@@ -58,7 +62,8 @@ class FileNameGetter {
         filename.takeIf { it.isNullOrEmpty() }?.let {
             filename = url.substring(url.lastIndexOf("/") + 1)
         }
-        return filename
+
+        return FileProperties(filename,conn?.contentLengthLong ?:0)
     }
 
 
