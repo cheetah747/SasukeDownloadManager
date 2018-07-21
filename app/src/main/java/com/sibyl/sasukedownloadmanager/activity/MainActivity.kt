@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.dfqin.grantor.PermissionListener
 import com.github.dfqin.grantor.PermissionsUtil
@@ -77,6 +78,7 @@ class MainActivity : AppCompatActivity() {
             val filesizeText = tranSizeText(FilePropertyGetter.INSTANCE.getFileProperties(url).fileSize)
             uiThread {
                 homeDialog?.setTitle("ダウンロードしますか？")
+                homeDialog?.findViewById<LinearLayout>(R.id.infoLayout)?.apply { visibility = View.VISIBLE }
                 //显示文件名，大小
                 arrayOf(R.id.fileNameTv, R.id.fileSizeTv).forEach {
                     when (it) {
@@ -85,7 +87,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 //隐藏进度
-//                homeDialog?.findViewById<ProgressBar>(R.id.progressBar)?.visibility = View.GONE
             }
         }
     }
