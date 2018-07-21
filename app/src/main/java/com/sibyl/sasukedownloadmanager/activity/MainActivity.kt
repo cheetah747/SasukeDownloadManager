@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -68,55 +69,66 @@ class MainActivity : AppCompatActivity() {
                             .setPositiveButton("分かった", { dialog, which -> homeDialog?.show() })
                             .create().show()
                 })
-                .create().apply { takeUnless { this@MainActivity.isFinishing }?.show() }
+                .create().apply {
+                    setOnShowListener {
+                        homeDialog?.run {
+                            //更改按钮颜色
+                            getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.parseColor("#f4511e"))
+                            getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.parseColor("#00b294"))
+                            getButton(AlertDialog.BUTTON_NEUTRAL).setTextColor(Color.parseColor("#039be5"))
+                        }
+                    }
+                    //如果界面没销毁，就显示
+                    takeUnless { this@MainActivity.isFinishing }?.show()
+                }
 
 //        dialog.findViewById<TextView>(R.id.url)?.text = url
 
-        //再获取文件名和大小
-        async {
-            val fileName = FilePropertyGetter.INSTANCE.getFileProperties(url).fileName
-            val filesizeText = tranSizeText(FilePropertyGetter.INSTANCE.getFileProperties(url).fileSize)
-            uiThread {
-                homeDialog?.setTitle("ダウンロードしますか？")
-                homeDialog?.findViewById<LinearLayout>(R.id.infoLayout)?.apply { visibility = View.VISIBLE }
-                //显示文件名，大小
-                arrayOf(R.id.fileNameTv, R.id.fileSizeTv).forEach {
-                    when (it) {
-                        R.id.fileNameTv -> homeDialog?.findViewById<TextView>(it)?.apply { text = fileName;visibility = View.VISIBLE }
-                        R.id.fileSizeTv -> homeDialog?.findViewById<TextView>(it)?.apply { text = filesizeText;visibility = View.VISIBLE }
+                    //再获取文件名和大小
+                    async {
+                        val fileName = FilePropertyGetter.INSTANCE.getFileProperties(url).fileName
+                        val filesizeText = tranSizeText(FilePropertyGetter.INSTANCE.getFileProperties(url).fileSize)
+                        uiThread {
+                            homeDialog?.setTitle("ダウンロードしますか？")
+                            homeDialog?.findViewById<LinearLayout>(R.id.infoLayout)?.apply { visibility = View.VISIBLE }
+                            //显示文件名，大小
+                            arrayOf(R.id.fileNameTv, R.id.fileSizeTv).forEach {
+                                when (it) {
+                                    R.id.fileNameTv -> homeDialog?.findViewById<TextView>(it)?.apply { text = fileName;visibility = View.VISIBLE }
+                                    R.id.fileSizeTv -> homeDialog?.findViewById<TextView>(it)?.apply { text = filesizeText;visibility = View.VISIBLE }
+                                }
+                            }
+                            //隐藏进度
+                        }
                     }
                 }
-                //隐藏进度
+
+        fun requestPermissions() {
+            val permissions = arrayOf(
+                    Manifest.permission.INTERNET,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+            if (!PermissionsUtil.hasPermission(this, *permissions)) {
+                PermissionsUtil.requestPermission(this, object : PermissionListener {
+                    override fun permissionGranted(permissions: Array<String>) {
+                        //用户授予了权限
+                    }
+
+                    override fun permissionDenied(permissions: Array<String>) {
+                        //用户拒绝了权限
+                        requestPermissions()
+                    }
+                }, *permissions)
             }
         }
-    }
 
-    fun requestPermissions() {
-        val permissions = arrayOf(
-                Manifest.permission.INTERNET,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-        if (!PermissionsUtil.hasPermission(this, *permissions)) {
-            PermissionsUtil.requestPermission(this, object : PermissionListener {
-                override fun permissionGranted(permissions: Array<String>) {
-                    //用户授予了权限
-                }
-
-                override fun permissionDenied(permissions: Array<String>) {
-                    //用户拒绝了权限
-                    requestPermissions()
-                }
-            }, *permissions)
+        /**
+         * 从剪切板获取内容
+         */
+        fun getTextFromClipboard(): String {
+            val myClipboard = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+            val abc: ClipData? = myClipboard.getPrimaryClip()
+            return abc?.getItemAt(0)?.getText().toString()
         }
     }
-
-    /**
-     * 从剪切板获取内容
-     */
-    fun getTextFromClipboard(): String {
-        val myClipboard = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
-        val abc: ClipData? = myClipboard.getPrimaryClip()
-        return abc?.getItemAt(0)?.getText().toString()
-    }
-}
