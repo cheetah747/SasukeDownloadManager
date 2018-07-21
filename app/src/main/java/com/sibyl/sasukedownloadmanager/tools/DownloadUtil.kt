@@ -39,7 +39,7 @@ class DownloadUtil(val downloadUrl: String?) {
                 // VISIBILITY_HIDDEN:                    始终不显示通知
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
 //                setTitle("${fileName.takeIf { it?.length ?: 0 > 13 }?.let { "${it.substring(0, 10)}" } ?: fileName}_${filesizeText}")
-                setTitle("${fileName.takeIf { it?.length ?: 0 > 18 }?.let { "${it.substring(0, 18) ?: fileName}" } }")
+                setTitle("${fileName.takeIf { it?.length ?: 0 > 18 }?.let { "${it.substring(0, 15) }..." } ?: fileName}")
                 setDescription(filesizeText)
                 setDestinationUri(Uri.fromFile(File("${Environment.getExternalStorageDirectory()}/Download", fileName)))
                 // 获取下载管理器服务的实例, 添加下载任务，并返回一个id
