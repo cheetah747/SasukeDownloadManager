@@ -37,19 +37,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:paddingTop="15dp"
             android:singleLine="true"
             android:visibility="gone" />
 
     </LinearLayout>
 
     <!--<TextView-->
-        <!--android:id="@+id/url"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:maxLines="1"-->
-        <!--android:singleLine="true"-->
-        <!--android:text="url"-->
-        <!--android:textIsSelectable="true" />-->
+    <!--android:id="@+id/url"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:maxLines="1"-->
+    <!--android:singleLine="true"-->
+    <!--android:text="url"-->
+    <!--android:textIsSelectable="true" />-->
 
 </LinearLayout>

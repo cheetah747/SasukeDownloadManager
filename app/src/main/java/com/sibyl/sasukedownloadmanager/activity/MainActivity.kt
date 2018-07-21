@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     //    val downloadUrl = "https://oalxfnrvo.qnssl.com/V4.5.0_ShengYiGuanJia180717.apk"
     var url: String = ""
     var downloadUtil: DownloadUtil? = null
-    var dialog: AlertDialog? = null
+    var homeDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,12 +47,12 @@ class MainActivity : AppCompatActivity() {
 
     fun start() {
         //先把弹窗显示出来
-        dialog = AlertDialog.Builder(this@MainActivity)
+        homeDialog = AlertDialog.Builder(this@MainActivity)
                 .setTitle("少々お待ちください")
                 .setView(R.layout.dialog_layout)
                 .setPositiveButton("はい", { dg, which ->
                     downloadUtil?.run {
-                        fileName = dialog?.findViewById<TextView>(R.id.fileNameTv)?.text.toString().trim()
+                        fileName = homeDialog?.findViewById<TextView>(R.id.fileNameTv)?.text.toString().trim()
                         download(this@MainActivity)
                     }
                     finish()
@@ -61,7 +61,14 @@ class MainActivity : AppCompatActivity() {
                 .setNegativeButton("いいえ", { dialog, which ->
                     finish()
                 })
+                .setNeutralButton("リンクを見る", { dialog, which ->
+                    AlertDialog.Builder(this@MainActivity)
+                            .setMessage(url)
+                            .setPositiveButton("分かった", { dialog, which -> homeDialog?.show() })
+                            .create().show()
+                })
                 .create().apply { takeUnless { this@MainActivity.isFinishing }?.show() }
+
 //        dialog.findViewById<TextView>(R.id.url)?.text = url
 
         //再获取文件名和大小
@@ -69,16 +76,16 @@ class MainActivity : AppCompatActivity() {
             val fileName = FilePropertyGetter.INSTANCE.getFileProperties(url).fileName
             val filesizeText = tranSizeText(FilePropertyGetter.INSTANCE.getFileProperties(url).fileSize)
             uiThread {
-                dialog?.setTitle("ダウンロードしますか？")
+                homeDialog?.setTitle("ダウンロードしますか？")
                 //显示文件名，大小
                 arrayOf(R.id.fileNameTv, R.id.fileSizeTv).forEach {
                     when (it) {
-                        R.id.fileNameTv -> dialog?.findViewById<TextView>(it)?.apply { text = fileName;visibility = View.VISIBLE }
-                        R.id.fileSizeTv -> dialog?.findViewById<TextView>(it)?.apply { text = filesizeText;visibility = View.VISIBLE }
+                        R.id.fileNameTv -> homeDialog?.findViewById<TextView>(it)?.apply { text = fileName;visibility = View.VISIBLE }
+                        R.id.fileSizeTv -> homeDialog?.findViewById<TextView>(it)?.apply { text = filesizeText;visibility = View.VISIBLE }
                     }
                 }
                 //隐藏进度
-//                dialog?.findViewById<ProgressBar>(R.id.progressBar)?.visibility = View.GONE
+//                homeDialog?.findViewById<ProgressBar>(R.id.progressBar)?.visibility = View.GONE
             }
         }
     }
