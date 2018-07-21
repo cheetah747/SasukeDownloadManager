@@ -7,37 +7,49 @@
     android:orientation="vertical">
 
 
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:animateLayoutChanges="true"
+        android:orientation="vertical"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp">
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+        <!--<ProgressBar-->
+        <!--android:id="@+id/progressBar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
 
-        <TextView
+        <EditText
             android:id="@+id/fileNameTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:background="@null"
+            android:maxLines="1"
+            android:paddingTop="15dp"
+            android:singleLine="true"
+            android:textColor="#000"
             android:visibility="gone" />
 
         <TextView
             android:id="@+id/fileSizeTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:paddingTop="15dp"
+            android:singleLine="true"
             android:visibility="gone" />
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/url"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:text="url"
-        android:textIsSelectable="true" />
+    <!--<TextView-->
+        <!--android:id="@+id/url"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:maxLines="1"-->
+        <!--android:singleLine="true"-->
+        <!--android:text="url"-->
+        <!--android:textIsSelectable="true" />-->
 
 </LinearLayout>

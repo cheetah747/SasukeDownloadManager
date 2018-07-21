@@ -10,19 +10,35 @@ import java.io.File
 /**
  * @author Sasuke on 2018/7/20.
  */
-class DownloadUtil {
-    fun download(context: Context, downloadUrl: String) {
+class DownloadUtil(val downloadUrl: String?) {
+    var fileName: String? = ""
+        get() {
+            return when (true) {
+                field.isNullOrEmpty() -> FilePropertyGetter.INSTANCE.getFileProperties(downloadUrl).fileName
+                else -> field
+            }
+        }
+
+    var filesizeText: String? = ""
+        get() {
+            return when (true) {
+                field.isNullOrEmpty() -> tranSizeText(FilePropertyGetter.INSTANCE.getFileProperties(downloadUrl).fileSize)
+                else -> field
+            }
+        }
+
+    fun download(context: Context) {
         async {
             // 创建下载请求
-            val fileName = FilePropertyGetter.INSTANCE.getFileProperties(downloadUrl).fileName
-            val filesizeText = tranSizeText(FilePropertyGetter.INSTANCE.getFileProperties(downloadUrl).fileSize)
+//            val fileName = FilePropertyGetter.INSTANCE.getFileProperties(downloadUrl).fileName
+//            val filesizeText = tranSizeText(FilePropertyGetter.INSTANCE.getFileProperties(downloadUrl).fileSize)
 
             val request: DownloadManager.Request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
                 //VISIBILITY_VISIBLE:                   下载过程中可见, 下载完后自动消失 (默认)
                 // VISIBILITY_VISIBLE_NOTIFY_COMPLETED:  下载过程中和下载完成后均可见
                 // VISIBILITY_HIDDEN:                    始终不显示通知
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                setTitle(fileName.takeIf { it.length > 21 }?.let { "${it.substring(0,18)}_${filesizeText}" })
+                setTitle(fileName.takeIf { it?.length ?: 0 > 21 }?.let { "${it.substring(0, 18)}_${filesizeText}" })
                 setDescription(filesizeText)
                 setDestinationUri(Uri.fromFile(File("${Environment.getExternalStorageDirectory()}/Download", fileName)))
                 // 获取下载管理器服务的实例, 添加下载任务，并返回一个id

@@ -5,11 +5,9 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.ProgressBar
 import android.widget.TextView
 import com.github.dfqin.grantor.PermissionListener
 import com.github.dfqin.grantor.PermissionsUtil
@@ -17,13 +15,15 @@ import com.sibyl.sasukedownloadmanager.R
 import com.sibyl.sasukedownloadmanager.tools.DownloadUtil
 import com.sibyl.sasukedownloadmanager.tools.FilePropertyGetter
 import com.sibyl.sasukedownloadmanager.tools.tranSizeText
-import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.async
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 
 class MainActivity : AppCompatActivity() {
     //    val downloadUrl = "https://oalxfnrvo.qnssl.com/V4.5.0_ShengYiGuanJia180717.apk"
     var url: String = ""
+    var downloadUtil: DownloadUtil? = null
+    var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,28 +35,34 @@ class MainActivity : AppCompatActivity() {
     fun init() {
         requestPermissions()
         url = getTextFromClipboard().apply {
-            if (this.isNullOrEmpty() || !this.startsWith("http"))
-                Snackbar.make(mainTv,"URL有误",Snackbar.LENGTH_LONG)
-                finish()
+            when (true) {
+                isNullOrEmpty() -> toast("クリップボードは空っぽだよ").apply { finish() }
+                !startsWith("http") -> toast("URLは間違ってる").apply { finish() }
+            }
         }
+        downloadUtil = DownloadUtil(url)
 //        val url = "https://oalxfnrvo.qnssl.com/V4.5.0_ShengYiGuanJia180717.apk"
 //        url = "https://d-07.winudf.com/b/apk/Y29tLnRlbmNlbnQubW9iaWxlcXFpXzY1MDBfMzk1NDYxNDU?_fn=UVEgSW50ZXJuYXRpb25hbCBDaGF0IENhbGxfdjYuMC4wX2Fwa3B1cmUuY29tLmFwaw&_p=Y29tLnRlbmNlbnQubW9iaWxlcXFp&as=43903923c1038afbaf02653841c18d255b517f21&c=1%7CCOMMUNICATION%7CZGV2PVRlbmNlbnQlMjBUZWNobm9sb2d5JTIwKFNoZW56aGVuKSUyMENvbXBhbnklMjBMdGQuJnZuPTYuMC4wJnZjPTY1MDA&k=61defa0ad92f9e1aca28dbef6b40b6755b54027d"
     }
 
     fun start() {
         //先把弹窗显示出来
-        val dialog = AlertDialog.Builder(this@MainActivity)
+        dialog = AlertDialog.Builder(this@MainActivity)
                 .setTitle("少々お待ちください")
                 .setView(R.layout.dialog_layout)
-                .setPositiveButton("はい", { dialog, which ->
-                    DownloadUtil().download(this@MainActivity, url)
+                .setPositiveButton("はい", { dg, which ->
+                    downloadUtil?.run {
+                        fileName = dialog?.findViewById<TextView>(R.id.fileNameTv)?.text.toString().trim()
+                        download(this@MainActivity)
+                    }
                     finish()
                 })
                 .setCancelable(false)
                 .setNegativeButton("いいえ", { dialog, which ->
                     finish()
-                }).create().apply { takeUnless { this@MainActivity.isFinishing }?.show() }
-        dialog.findViewById<TextView>(R.id.url)?.text = url
+                })
+                .create().apply { takeUnless { this@MainActivity.isFinishing }?.show() }
+//        dialog.findViewById<TextView>(R.id.url)?.text = url
 
         //再获取文件名和大小
         async {
@@ -72,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 //隐藏进度
-                dialog?.findViewById<ProgressBar>(R.id.progressBar)?.visibility = View.GONE
+//                dialog?.findViewById<ProgressBar>(R.id.progressBar)?.visibility = View.GONE
             }
         }
     }

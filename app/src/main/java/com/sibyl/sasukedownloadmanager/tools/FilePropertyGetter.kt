@@ -17,7 +17,8 @@ class  FilePropertyGetter {
     data class Properties(var fileName: String = "", var fileSize: Long = 0)
 
 
-    fun getFileProperties(url: String): Properties {
+    fun getFileProperties(url: String?): Properties {
+        if(url.isNullOrEmpty()) return Properties()
         var filename = ""
         var isok = false
         var conn: URLConnection? = null
@@ -62,12 +63,11 @@ class  FilePropertyGetter {
             e.printStackTrace()
         }
         //如果上面的没获取成功，那就补救一下，用直接截取“/”后面的字符串来获取。
-        filename.takeIf { it.isNullOrEmpty() }?.let {
-            filename = url.substring(url.lastIndexOf("/") + 1)
+        if(filename.isNullOrEmpty()){
+            filename = url?.substring(url.lastIndexOf("/") + 1) ?: ""
         }
 
-        return Properties(filename, conn?.contentLengthLong
-                ?: 0)
+        return Properties(filename, conn?.contentLengthLong?: 0)
     }
 
 
