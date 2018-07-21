@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
     var url: String = ""
     var downloadUtil: DownloadUtil? = null
     var homeDialog: AlertDialog? = null
+    var isWithFinish: Boolean = true//是否一同关掉activity
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,13 +65,14 @@ class MainActivity : AppCompatActivity() {
                     homeDialog?.dismiss()
                 })
                 .setNeutralButton("リンクを見る", { dialog, which ->
+                    isWithFinish = false//不要关掉Activity
                     AlertDialog.Builder(this@MainActivity)
                             .setMessage(url)
-                            .setPositiveButton("分かった", { dialog, which -> homeDialog?.show() })
+                            .setPositiveButton("分かった", { dialog, which -> isWithFinish = true ;homeDialog?.show() })
                             .create().show()
                 })
                 .create().apply {
-                    setOnDismissListener { finish() }//在dismiss的监听里执行Activity的finish，如果直接finish()或者把dismiss和finish同时执行，会闪屏
+                    setOnDismissListener { if (isWithFinish)finish() }//在dismiss的监听里执行Activity的finish，如果直接finish()或者把dismiss和finish同时执行，会闪屏
                     setOnShowListener {
                         homeDialog?.run {
                             //更改按钮颜色
