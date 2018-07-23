@@ -1,9 +1,6 @@
 package com.sibyl.sasukedownloadmanager.activity
 
 import android.Manifest
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -16,6 +13,7 @@ import com.github.dfqin.grantor.PermissionsUtil
 import com.sibyl.sasukedownloadmanager.R
 import com.sibyl.sasukedownloadmanager.tools.DownloadUtil
 import com.sibyl.sasukedownloadmanager.tools.FilePropertyGetter
+import com.sibyl.sasukedownloadmanager.tools.getTextFromClipboard
 import com.sibyl.sasukedownloadmanager.tools.tranSizeText
 import org.jetbrains.anko.async
 import org.jetbrains.anko.toast
@@ -37,7 +35,7 @@ class MainActivity : AppCompatActivity() {
 
     fun init() {
         requestPermissions()
-        url = getTextFromClipboard().apply {
+        url = getTextFromClipboard(this).apply {
             when (true) {
                 isNullOrEmpty() -> toast("クリップボードは空っぽだよ").apply { homeDialog?.dismiss() }
                 !startsWith("http") -> toast("URLは間違ってる").apply { homeDialog?.dismiss() }
@@ -127,12 +125,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * 从剪切板获取内容
-     */
-    fun getTextFromClipboard(): String {
-        val myClipboard = (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
-        val abc: ClipData? = myClipboard.getPrimaryClip()
-        return abc?.getItemAt(0)?.getText().toString()
-    }
+
 }
