@@ -4,22 +4,19 @@ import android.Manifest
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.github.dfqin.grantor.PermissionListener
 import com.github.dfqin.grantor.PermissionsUtil
 import com.sibyl.sasukedownloadmanager.R
-import com.sibyl.sasukedownloadmanager.tools.DownloadUtil
-import com.sibyl.sasukedownloadmanager.tools.FilePropertyGetter
-import com.sibyl.sasukedownloadmanager.tools.getTextFromClipboard
-import com.sibyl.sasukedownloadmanager.tools.tranSizeText
+import com.sibyl.sasukedownloadmanager.tools.*
 import org.jetbrains.anko.async
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
     //    val downloadUrl = "https://oalxfnrvo.qnssl.com/V4.5.0_ShengYiGuanJia180717.apk"
     var url: String = ""
     var downloadUtil: DownloadUtil? = null
@@ -66,12 +63,13 @@ class MainActivity : AppCompatActivity() {
                     isWithFinish = false//不要关掉Activity
                     AlertDialog.Builder(this@MainActivity)
                             .setMessage(url)
+                            .setTitle("")
                             .setCancelable(false)
-                            .setPositiveButton("分かった", { dialog, which -> isWithFinish = true ;homeDialog?.show() })
+                            .setPositiveButton("分かった", { dialog, which -> isWithFinish = true;homeDialog?.show() })
                             .create().show()
                 })
                 .create().apply {
-                    setOnDismissListener { if (isWithFinish)finish() }//在dismiss的监听里执行Activity的finish，如果直接finish()或者把dismiss和finish同时执行，会闪屏
+                    setOnDismissListener { if (isWithFinish) finish() }//在dismiss的监听里执行Activity的finish，如果直接finish()或者把dismiss和finish同时执行，会闪屏
                     setOnShowListener {
                         homeDialog?.run {
                             //更改按钮颜色
@@ -96,10 +94,16 @@ class MainActivity : AppCompatActivity() {
                 //显示文件名，大小
                 arrayOf(R.id.fileNameTv, R.id.fileSizeTv).forEach {
                     when (it) {
-                        R.id.fileNameTv -> homeDialog?.findViewById<TextView>(it)?.apply { text = fileName;visibility = View.VISIBLE }
+                        R.id.fileNameTv -> homeDialog?.findViewById<EditText>(it)?.apply {
+                            setText(fileName)
+                            visibility = View.VISIBLE
+                            setSelection(0, text.toString().lastIndexOf("."))
+                        }
                         R.id.fileSizeTv -> homeDialog?.findViewById<TextView>(it)?.apply { text = filesizeText;visibility = View.VISIBLE }
                     }
                 }
+                homeDialog?.findViewById<EditText>(R.id.fileNameTv)?.requestFocus()
+                showKeyboard(homeDialog?.findViewById(R.id.fileNameTv)!!)
                 //隐藏进度
             }
         }

@@ -18,10 +18,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <activity
+            android:name=".activity.BaseActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:theme="@style/AppTheme" />
+
         <activity
             android:name=".activity.MainActivity"
             android:excludeFromRecents="true"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -31,7 +39,10 @@
 
         <activity
             android:name=".activity.JumpEntryAct"
-            android:excludeFromRecents="true">
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="adjustResize">
 
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.SEND" />

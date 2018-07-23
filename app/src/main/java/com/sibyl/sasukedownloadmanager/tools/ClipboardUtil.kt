@@ -19,6 +19,8 @@ fun getTextFromClipboard(context: Context): String {
 /**
  * 把内容写入剪切板
  */
-fun setText2Clipboard(context: Context){
-
+fun setText2Clipboard(context: Context,str: String){
+    val myClipboard = (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
+    val newData: ClipData = ClipData.newPlainText("",str)
+    myClipboard.primaryClip = newData
 }
