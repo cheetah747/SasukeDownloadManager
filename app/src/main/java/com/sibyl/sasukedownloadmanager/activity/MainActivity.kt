@@ -68,6 +68,7 @@ class MainActivity : AppCompatActivity() {
                     isWithFinish = false//不要关掉Activity
                     AlertDialog.Builder(this@MainActivity)
                             .setMessage(url)
+                            .setCancelable(false)
                             .setPositiveButton("分かった", { dialog, which -> isWithFinish = true ;homeDialog?.show() })
                             .create().show()
                 })
