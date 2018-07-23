@@ -97,7 +97,7 @@ class MainActivity : BaseActivity() {
                         R.id.fileNameTv -> homeDialog?.findViewById<EditText>(it)?.apply {
                             setText(fileName)
                             visibility = View.VISIBLE
-                            setSelection(0, text.toString().lastIndexOf("."))
+                            text.toString().lastIndexOf(".").takeIf { it != -1 }?.let { setSelection(0,it) } ?: selectAll()
                         }
                         R.id.fileSizeTv -> homeDialog?.findViewById<TextView>(it)?.apply { text = filesizeText;visibility = View.VISIBLE }
                     }
