@@ -66,6 +66,8 @@ class  FilePropertyGetter {
         if(filename.isNullOrEmpty()){
             filename = url?.substring(url.lastIndexOf("/") + 1) ?: ""
         }
+        //%20转义为_下划线吧
+        filename = filename.replace("%20","_")
 
         return Properties(filename, conn?.contentLengthLong?: 0)
     }
