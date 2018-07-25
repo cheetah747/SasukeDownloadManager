@@ -69,7 +69,7 @@ class  FilePropertyGetter {
         //%20转义为_下划线吧
         filename = filename.replace("%20","_")
         //有些带后缀的竟然后面还加了好多乱码
-        arrayOf(".mp4",".mp3",".apk",".pdf",".mkv",".torrent").forEach { suffix ->
+        arrayOf(".mp4",".mp3",".apk",".pdf",".mkv",".torrent",".jpg",".jpeg",".bmp",".gif",".png").forEach { suffix ->
             filename.takeIf { suffix in it}?.let { filename = it.split(suffix)[0] + suffix }
         }
 
